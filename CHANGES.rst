@@ -22,6 +22,8 @@ Bug fixes:
 
 - Fix bug on Image rotation if ImageIFD.XResolution or ImageIFD.YResolution are not set.
   [loechel]
+- Fix test to use new zope testbrowser internals.
+  [davisagli]
 
 
 4.2.0 (2017-03-26)
