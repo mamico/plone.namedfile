@@ -74,10 +74,22 @@ class TestImage(unittest.TestCase):
                     getFile('image.gif'),
                     filename=u'image.gif')),
             'image/gif')
+        self.assertEqual(
+            get_contenttype(
+                NamedImage(
+                    getFile('image.svg'),
+                    filename=u'image.svg')),
+            'image/svg+xml')
         self.assertEqual(get_contenttype(
             NamedImage(getFile('notimage.doc'),
                        filename=u'notimage.doc')),
             'application/msword')
+
+    def testSVGImageSize(self):
+        image = NamedImage(
+            getFile('image.svg'),
+            filename=u'image.svg')
+        self.assertEqual(image.getImageSize(), (-1, -1))
 
     def testImageValidation(self):
         from plone.namedfile.field import InvalidImageFile,\

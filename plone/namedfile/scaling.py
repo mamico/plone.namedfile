@@ -56,6 +56,9 @@ class ImageScale(BrowserView):
 
         url = self.context.absolute_url()
         extension = self.data.contentType.split('/')[-1].lower()
+        if extension == 'svg+xml':
+            # handle special case of svg:
+            extension = 'svg'
         if 'uid' in info:
             name = info['uid']
         else:
@@ -246,7 +249,10 @@ class DefaultImageScalingFactory(object):
             raise
         except IOError:
             if getattr(orig_value, 'contentType', '') == 'image/svg+xml':
-                result = orig_data.read(), 'SVG', (width, height)
+                if isinstance(orig_data, (bytes, str)):
+                    result = orig_data, 'SVG+XML', (width, height)
+                else:
+                    result = orig_data.read(), 'SVG', (width, height)
             else:
                 logger.exception(
                     'Could not scale "{0!r}" of {1!r}'.format(

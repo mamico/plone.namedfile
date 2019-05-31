@@ -342,6 +342,18 @@ class ImageScalingTests(unittest.TestCase):
         self.assertEqual(len(foo.srcset), 1)
         self.assertEqual(foo.srcset[0]['scale'], 2)
 
+    def testScalingSVG(self):
+        """Test NOOP SVG scaling.
+        """
+        data = getFile('image.svg')
+        item = DummyContent()
+        item.image = NamedImage(data, 'image/svg+xml', u'image.svg')
+        scaling = ImageScaling(item, None)
+        foo = scaling.scale('image', width=100, height=80)
+        self.assertEqual(data, foo.data.data)
+        bar = scaling.scale('image', width=10, height=10)
+        self.assertEqual(data, bar.data.data)
+
 
 class ImageTraverseTests(unittest.TestCase):
 
@@ -368,7 +380,7 @@ class ImageTraverseTests(unittest.TestCase):
         tag = static_traverser.traverse(scale, stack)
         base = self.item.absolute_url()
         expected = \
-            r'<img src="{0}/@@images/([-0-9a-f]{{36}}).(jpeg|gif|png)" ' \
+            r'<img src="{0}/@@images/([-0-9a-f]{{36}}).(jpeg|gif|png|svg)" ' \
             r'alt="foo" title="foo" height="(\d+)" width="(\d+)" />'.format(
                 base,
             )
@@ -426,6 +438,15 @@ class ImageTraverseTests(unittest.TestCase):
         ImageScaling._sizes = {'foo': (42, 42)}
         self.assertRaises(Unauthorized, self.traverse, 'image/foo')
         self.item.__allow_access_to_unprotected_subobjects__ = 1
+
+    def testCustomSizeSVG(self):
+        """Test NOOP SVG scaling.
+        """
+        ImageScaling._sizes = {'thumb': (128, 128)}
+        data = getFile('image.svg')
+        self.item.image = NamedImage(data, 'image/svg+xml', u'image.svg')
+        uid, ext, width, height = self.traverse('image/thumb')
+        self.assertEqual(ext, 'svg')
 
 
 def test_suite():

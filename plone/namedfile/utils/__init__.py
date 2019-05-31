@@ -141,6 +141,11 @@ def getImageInfo(data):
         # handle TIFFs
         content_type, width, height = process_tiff(data)
 
+    elif size >= 4 and data[:5] == '<?xml' and '<svg' in data:
+        # handle SVG
+        content_type = 'image/svg+xml'
+        log.info('Can not handle SVG. Image sizes are not set properly.')
+
     else:
         # Use PIL / Pillow to determ Image Information
         try:
