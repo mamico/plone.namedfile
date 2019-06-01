@@ -250,14 +250,15 @@ class DefaultImageScalingFactory(object):
         except IOError:
             if getattr(orig_value, 'contentType', '') == 'image/svg+xml':
                 if isinstance(orig_data, (bytes, str)):
-                    result = orig_data, 'SVG+XML', (width, height)
+                    result = orig_data, 'svg+xml', (width, height)
                 else:
-                    result = orig_data.read(), 'SVG', (width, height)
+                    orig_data.seek(0)
+                    result = orig_data.read(), 'svg+xml', (width, height)
             else:
                 logger.exception(
                     'Could not scale "{0!r}" of {1!r}'.format(
                         orig_value,
-                        self.context.absolute_url,
+                        self.context.absolute_url(),
                     ),
                 )
                 return

@@ -58,6 +58,7 @@ setup(
             'lxml',
             'Pillow',
             'plone.testing[z2]',
+            'plone.app.testing',
         ],
         # BBB - remove in version 5
         'blobs': [],
